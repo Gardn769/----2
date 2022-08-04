@@ -32,11 +32,11 @@ const store = {
 app.post('/api/user/login', function (req, res) {
   res.status(201);
   res.send({ id: 1, mail: "test@mail.ru" })
-})
+});
 
 app.get('/', (req, res) => {
   res.send('GET request to the homepage')
-})
+});
 
 app.get("/api/books", (req, res) => {
   const { books } = store;
@@ -52,7 +52,7 @@ app.get("/api/books/:id", (req, res) => {
     res.status(404);
     res.json("404 | книга не найдена");
     return;
-  }
+  };
 
  res.json(books[idx]);
 });
@@ -85,7 +85,7 @@ app.put("/api/books/:id", (req, res) => {
     res.status(404);
     res.json("404 | книга не найдена");
     return
-  }
+  };
 
     books[idx] = {
       ...books[idx],
