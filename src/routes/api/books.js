@@ -50,7 +50,7 @@ router
    res.json(books[idx]);
   })
 
-.post("/", (req, res) => {
+.post("/",  fileMulter.single('book'), (req, res) => {
     // const { books } = store;
     console.log(req.body);
     console.log('post');
@@ -69,6 +69,7 @@ router
     console.log(newbook);
     res.status(201);
     res.json(newbook);
+    // res.json(true);
   })
 
 .put("/:id", (req, res) => {
