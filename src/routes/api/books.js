@@ -17,27 +17,25 @@ const fileMulter = require('../../middleware/filemulter')
 //     })
 router
 .get('/:id/download', (req, res) => {
-    const { id } = req.params
-    const idx = books.findIndex(el => el.id === id)
+    const { id } = req.params;
+    const idx = books.findIndex(el => el.id === id);
 
     if (idx === -1) {
-        res.status(404)
-        res.send('книга не найдена')
+        res.status(404);
+        res.send('книга не найдена');
         return
     }
 
-    const { fileBook } = books[idx]
-    const file = path.join(process.env.APP_ROOT, 'public', 'books', fileBook)
-    res.download(file)
+    const { fileBook } = books[idx];
+    const file = path.join(process.env.APP_ROOT, 'public', 'books', fileBook);
+    res.download(file);
     })
 
 .get("/", (req, res) => {
-    // const { books } = store;
     res.json(books);
   })
 
 .get("/:id", (req, res) => {
-    // const { books } = store;
     const { id } = req.params;
     const idx = books.findIndex((el) => el.id === id);
 
@@ -51,10 +49,9 @@ router
   })
 
 .post("/",  fileMulter.single('book'), (req, res) => {
-    // const { books } = store;
     console.log(req.body);
     console.log('post');
-    const { title, description, authors, favorite, fileCover, fileName } = req.body;
+    const { title, description, authors, favorite, fileCover, fileName, fileBook } = req.body;
 
     const newbook = new Book(
       title,
@@ -62,7 +59,8 @@ router
       authors,
       favorite,
       fileCover,
-      fileName
+      fileName,
+      fileBook,
     );
     books.push(newbook);
 
@@ -72,12 +70,11 @@ router
     // res.json(true);
   })
 
-.put("/:id", (req, res) => {
-    // const { books } = store;
+.put("/:id",  fileMulter.single('book'), (req, res) => {
     console.log('put');
     console.log( req.body);
     const { id } = req.params;
-    const { title, description, authors, favorite, fileCover, fileName } = req.body;
+    const { title, description, authors, favorite, fileCover, fileName, fileBook } = req.body;
     const idx = books.findIndex((el) => el.id === id);
 
     if (idx == -1) {
@@ -94,6 +91,7 @@ router
         favorite,
         fileCover,
         fileName,
+        fileBook,
       };
 
       res.json(books[idx]);
@@ -101,7 +99,6 @@ router
   })
 
 .delete("/:id", (req, res) => {
-    // const { books } = store;
     const { id } = req.params;
     const idx = books.findIndex((el) => el.id === id);
 

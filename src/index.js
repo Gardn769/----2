@@ -17,7 +17,7 @@ app.use('/api/books', booksRouter)
 app.use('/api/users', usersRouter)
 app.use(error404)
 
-const publicPath = path.join('../', 'storage')
+const publicPath = path.join('', 'storage')
 if (!fs.existsSync(publicPath)) {
   fs.mkdirSync(publicPath)
 }
