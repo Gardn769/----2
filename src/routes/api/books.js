@@ -6,15 +6,6 @@ const router = express.Router()
 const fileMulter = require('../../middleware/filemulter')
 
 
-// .post('/upload-img',
-//     fileMulter.single('cover-img'),
-//     (req, res) => {
-//         if(req.file){
-//             const {path} = req.file
-//             res.json({path})
-//         }
-//         res.json()
-//     })
 router
 .get('/:id/download', (req, res) => {
     const { id } = req.params;
@@ -27,7 +18,7 @@ router
     }
 
     const { fileBook } = books[idx];
-    const file = path.join(process.env.APP_ROOT, 'public', 'books', fileBook);
+    const file = path.join('storage', fileBook);
     res.download(file);
     })
 
@@ -48,10 +39,8 @@ router
    res.json(books[idx]);
   })
 
-.post("/",  fileMulter.single('book'), (req, res) => {
-    console.log(req.body);
-    console.log('post');
-    const { title, description, authors, favorite, fileCover, fileName, fileBook } = req.body;
+.post("/",  fileMulter.single('fileBook'), (req, res) => {
+    const { title, description, authors, favorite, fileCover, } = req.body;
 
     const newbook = new Book(
       title,
@@ -59,20 +48,16 @@ router
       authors,
       favorite,
       fileCover,
-      fileName,
-      fileBook,
+      fileName = req.file.originalname,
+      fileBook = req.file.filename,
     );
     books.push(newbook);
 
-    console.log(newbook);
     res.status(201);
     res.json(newbook);
-    // res.json(true);
   })
 
-.put("/:id",  fileMulter.single('book'), (req, res) => {
-    console.log('put');
-    console.log( req.body);
+.put("/:id",  fileMulter.single('fileBook'), (req, res) => {
     const { id } = req.params;
     const { title, description, authors, favorite, fileCover, fileName, fileBook } = req.body;
     const idx = books.findIndex((el) => el.id === id);
