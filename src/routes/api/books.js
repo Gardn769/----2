@@ -7,6 +7,23 @@ const fileMulter = require('../../middleware/filemulter')
 
 
 router
+.get("/", (req, res) => {
+    res.json(books);
+})
+
+.get("/:id", (req, res) => {
+    const { id } = req.params;
+    const idx = books.findIndex((el) => el.id === id);
+
+    if (idx == -1) {
+      res.status(404);
+      res.redirect('/');
+      return;
+    };
+
+   res.json(books[idx]);
+})
+
 .get('/:id/download', (req, res) => {
     const { id } = req.params;
     const idx = books.findIndex(el => el.id === id);
@@ -20,24 +37,7 @@ router
     const { fileBook } = books[idx];
     const file = path.join('storage', fileBook);
     res.download(file);
-    })
-
-.get("/", (req, res) => {
-    res.json(books);
-  })
-
-.get("/:id", (req, res) => {
-    const { id } = req.params;
-    const idx = books.findIndex((el) => el.id === id);
-
-    if (idx == -1) {
-      res.status(404);
-      res.json("404 | книга не найдена");
-      return;
-    };
-
-   res.json(books[idx]);
-  })
+})
 
 .post("/",  fileMulter.single('fileBook'), (req, res) => {
     const { title, description, authors, favorite, fileCover, } = req.body;
@@ -55,7 +55,7 @@ router
 
     res.status(201);
     res.json(newbook);
-  })
+})
 
 .put("/:id",  fileMulter.single('fileBook'), (req, res) => {
     const { id } = req.params;

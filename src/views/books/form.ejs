@@ -1,0 +1,36 @@
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="InputTitle" class="form-label">Название книги</label>
+      <input type="text" class="form-control" id="InputTitle" name="title" value=<%- book.title %>>
+    </div>
+    <div class="form-group">
+      <label for="InputDescription" class="form-label">Описание</label>
+      <textarea type="text" class="form-control" id="InputDescription" rows="3" name="description"><%= book.description %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="InputAutors" class="form-label">Автор/Авторы</label>
+      <input type="text" class="form-control" id="InputAutors" name="authors" value=<%- book.authors %>>
+    </div>
+    <div class="form-group">
+      <label for="InputFileBook" class="form-label">Книга (файл)</label>
+      <input type="file" class="form-control" id="InputFileBook" name="book"/>
+    </div>
+    <% if (book.fileBook) { %>
+      <a class="btn btn-primary" href=<%- '/../storage/' + book.fileBook %> download=<%- book.fileName %> >Скачать</a>
+    <% } %>
+
+    <div class="form-group">
+      <label for="InputFileCover" class="form-label">Обложка (файл картинки) </label>
+      <input type="file" class="form-control" id="InputFileCover" name="cover">
+    </div>
+    <% if (book.fileCover) { %>
+      <a class="btn btn-primary" href=<%- '/../storage/' + book.fileCover %> download=<%- book.fileCover %> >Скачать</a>
+    <% } %>
+    <% if (book.fileCover) { %>
+      <div class="col-md-4">
+        <img src=<%- '/../storage/' + book.fileCover %>>
+      </div>
+    <% } %>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+  </form>
