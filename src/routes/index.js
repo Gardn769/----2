@@ -102,6 +102,20 @@ router
       title: 'view',
       book: books[idx],
     });
-  });
+})
+
+.post('/books/delete/:id', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), (req, res) => {
+    const { id } = req.params
+    const idx = books.findIndex(el => el.id === id)
+
+    if (idx === -1) {
+      res.status(404)
+      res.send('книга не найдена')
+      return
+    }
+
+    books.splice(idx, 1);
+    res.redirect('/books');
+  })
 
 module.exports = router;

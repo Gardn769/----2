@@ -12,6 +12,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Заголовок</th>
+                <th scope="col">Автор</th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -21,6 +22,7 @@
                     <tr>
                         <th scope="row"><%= idx +1 %></th>
                         <td><%= el.title %></td>
+                        <td><%= el.authors %></td>
                         <td class="text-right">
                             <a class="btn btn-sm btn-success" href="/books/<%= el.id %>">
                                 <i class="fa fa-eye" aria-hidden="true"></i>
@@ -36,15 +38,15 @@
                         </td>
                     </tr>
                 <% }) %>
-    
+
             </tbody>
         </table>
 
-    <% } else { %>   
+    <% } else { %>
         <h3 class="mt-5">Записей пока нет</h3>
-    <% } %>    
+    <% } %>
 
-    
+
 
 
 
