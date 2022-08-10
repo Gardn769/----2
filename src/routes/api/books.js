@@ -17,35 +17,30 @@ router
   }
 })
 
-.get("/:id", (req, res) => {
+.get("/:id", async (req, res) => {
     const { id } = req.params;
-    const idx = books.findIndex((el) => el.id === id);
-
-    if (idx == -1) {
-      res.status(404);
-      res.redirect('/');
-      return;
-    };
-
-   res.json(books[idx]);
-})
-
-.get('/:id/download', (req, res) => {
-    const { id } = req.params;
-    const idx = books.findIndex(el => el.id === id);
-
-    if (idx === -1) {
-        res.status(404);
-        res.send('книга не найдена');
-        return
+    try {
+      const book = await Book.findById(id).select('-__v')
+      res.json(book)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
     }
-
-    const { fileBook } = books[idx];
-    const file = path.join('storage', fileBook);
-    res.download(file);
 })
 
-.post("/",  fileMulter.single('fileBook'), (req, res) => {
+.get('/:id/download', async (req, res) => {
+    const { id } = req.params;
+    try {
+      const fileBook = await Book.findById(id).select('fileBook')
+      const file = path.join(process.env.APP_ROOT, 'public', 'books', fileBook)
+      res.download(file)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
+})
+
+.post("/",  fileMulter.single('fileBook'), async (req, res) => {
     const { title, description, authors, favorite, fileCover, } = req.body;
 
     const newbook = new Book(
@@ -57,50 +52,51 @@ router
       fileName = req.file.originalname,
       fileBook = req.file.filename,
     );
-    books.push(newbook);
-
-    res.status(201);
-    res.json(newbook);
+    try {
+      await newBook.save()
+      res.json(newBook)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
 })
 
-.put("/:id",  fileMulter.single('fileBook'), (req, res) => {
+.put("/:id",  fileMulter.single('fileBook'), async (req, res) => {
     const { id } = req.params;
     const { title, description, authors, favorite, fileCover, fileName, fileBook } = req.body;
     const idx = books.findIndex((el) => el.id === id);
-
-    if (idx == -1) {
-      res.status(404);
-      res.json("404 | книга не найдена");
-      return
-    };
-
-      books[idx] = {
-        ...books[idx],
-        title,
-        description,
-        authors,
-        favorite,
-        fileCover,
-        fileName,
-        fileBook,
-      };
-
-      res.json(books[idx]);
-
+    data = {
+      title,
+      description,
+      authors,
+      favorite,
+    }
+    if (req.files.cover) {
+      data.fileCover = req.files.cover[0].filename
+    }
+    if (req.files.book) {
+      data.fileName = req.files.book[0].originalname
+      data.fileBook = req.files.book[0].filename
+    }
+  
+    try {
+      await Book.findByIdAndUpdate(id, data)
+      res.redirect(`/api/books/${id}`)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
   })
 
-.delete("/:id", (req, res) => {
+.delete("/:id", async (req, res) => {
     const { id } = req.params;
-    const idx = books.findIndex((el) => el.id === id);
-
-    if (idx == -1) {
-      res.status(404);
-      res.json("404 | книга не найдена");
-      return
+    try {
+      await Book.deleteOne({_id: id})
+      res.json(true)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
     }
-
-    books.splice(idx, 1);
-    res.json("ok");
 
   });
 
