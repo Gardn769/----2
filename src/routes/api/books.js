@@ -7,8 +7,14 @@ const fileMulter = require('../../middleware/filemulter')
 
 
 router
-.get("/", (req, res) => {
-    res.json(books);
+.get("/", async (req, res) => {
+  try {
+    const books = await Book.find().select('-__v')
+    res.json(books)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error)
+  }
 })
 
 .get("/:id", (req, res) => {
