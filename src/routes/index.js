@@ -11,21 +11,27 @@ router
     });
 })
 
-.get('/books', (req, res) => {
+.get('/books', async(req, res) => {
+  try {
+    const books = await Book.find().select('-__v')
     res.render('books/index', {
       title: 'index',
       books
-    });
-  })
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error)
+  }
+})
 
-  .get('/books/create', (req, res) => {
+.get('/books/create', (req, res) => {
     res.render('books/create', {
       title: 'create',
       book: {},
     });
   })
 
-.post('/books/create', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), (req, res) => {
+.post('/books/create', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), async (req, res) => {
     const {
       title,
       description,
@@ -45,8 +51,13 @@ router
       fileName,
       fileBook,
     )
-    books.push(newBook)
-    res.redirect('/books');
+    try {
+      await newBook.save()
+      res.redirect('/')
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
   })
 
 .get('/books/update/:id', (req, res) => {
@@ -58,7 +69,7 @@ router
     });
   })
 
-.post('/books/update/:id', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), (req, res) => {
+.post('/books/update/:id', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), async (req, res) => {
     const { id } = req.params
     const idx = books.findIndex(el => el.id === id)
 
@@ -87,24 +98,30 @@ router
     books[idx].fileName = req.files.cover ? req.files.cover[0].originalname : books[idx].fileName
     books[idx].fileBook = req.files.cover ? req.files.cover[0].filename : books[idx].fileBook
 
-    res.redirect('/books');
+    try {
+      await Book.findByIdAndUpdate(id, data)
+      res.redirect('/')
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
   })
 
-.get('/books/:id', (req, res) => {
+.get('/books/:id', async (req, res) => {
     const {id} = req.params;
-    const idx = books.findIndex(el => el.id === id);
-    if (idx == -1) {
-      res.status(404);
-      res.redirect('/404');
-      return;
-    };
-    res.render('books/view', {
-      title: 'view',
-      book: books[idx],
-    });
+    try {
+      const book = await Book.findById(id).select('-__v')
+      res.render('books/view', {
+        title: 'view',
+        book,
+      })
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
 })
 
-.post('/books/delete/:id', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), (req, res) => {
+.post('/books/delete/:id', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), async (req, res) => {
     const { id } = req.params
     const idx = books.findIndex(el => el.id === id)
 

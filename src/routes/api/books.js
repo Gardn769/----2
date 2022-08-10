@@ -40,25 +40,32 @@ router
     }
 })
 
-.post("/",  fileMulter.single('fileBook'), async (req, res) => {
-    const { title, description, authors, favorite, fileCover, } = req.body;
+.post('/', fileMulter.fields([{name: 'book'}, {name: 'cover'}]), async function (req, res) {
+  const {
+    title,
+    description,
+    authors,
+  } = req.body
+  const fileCover = req.files.cover ? req.files.cover[0].filename : null
+  const fileName = req.files.book ? req.files.book[0].originalname : null
+  const fileBook = req.files.book ? req.files.book[0].filename : null
 
-    const newbook = new Book(
-      title,
-      description,
-      authors,
-      favorite,
-      fileCover,
-      fileName = req.file.originalname,
-      fileBook = req.file.filename,
-    );
-    try {
-      await newBook.save()
-      res.json(newBook)
-    } catch (error) {
-      console.error(error);
-      res.status(500).json(error)
-    }
+  const newBook = new Book({
+    title,
+    description,
+    authors,
+    fileCover,
+    fileName,
+    fileBook,
+  })
+
+  try {
+    await newBook.save()
+    res.json(newBook)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error)
+  }
 })
 
 .put("/:id",  fileMulter.single('fileBook'), async (req, res) => {
