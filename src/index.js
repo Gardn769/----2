@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-app.set("views",  'src/views')
+app.set("views",  path.join(process.env.APP_ROOT || 'src', 'views'))
 app.use('/', indexRouter)
 
 app.use('/api/books', booksRouter)
