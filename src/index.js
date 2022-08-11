@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
+// require('dotenv').config()
 
 const error404 = require('./middleware/error-404')
 const indexRouter = require('./routes/index')
 const booksRouter = require('./routes/api/books')
 const usersRouter = require('./routes/api/users')
 
-const PORT = process.env.PORT || 3000;
+
+const { PORT, URL_MONGO } = require('./config')
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
@@ -27,5 +30,13 @@ if (!fs.existsSync(publicPath)) {
 
 app.use(error404)
 
+async function start() {
+  try {
+    await mongoose.connect(URL_MONGO)
+    app.listen(PORT, console.log(`App listening on port ${PORT}`));
+  } catch (e) {
+    console.error(e)
+  }
+}
 
-app.listen(PORT, console.log(`App listening on port ${PORT}`));
+start()
