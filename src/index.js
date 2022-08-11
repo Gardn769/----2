@@ -10,7 +10,7 @@ const booksRouter = require('./routes/api/books')
 const usersRouter = require('./routes/api/users')
 
 
-const { PORT, URL_MONGO } = require('../config')
+const { PORT, URL_MONGO } = require('./config')
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
