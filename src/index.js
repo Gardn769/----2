@@ -2,27 +2,33 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const passport = require("passport")
+var session = require('express-session');
 // require('dotenv').config()
 
 const error404 = require('./middleware/error-404')
 const indexRouter = require('./routes/index')
 const booksRouter = require('./routes/api/books')
 const usersRouter = require('./routes/api/users')
+const {initPassport} = require('./auth/passport')
 
 
 const { PORT, URL_MONGO } = require('./config')
 
 const app = express();
+initPassport(passport);
+app.use(session({secret: 'keyboard cat'}));
+
 app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-app.set("views",  path.join(process.env.APP_ROOT || 'src', 'views'))
-app.use('/', indexRouter)
+app.set("views",  path.join(process.env.APP_ROOT || 'src', 'views'));
+app.use('/', indexRouter);
 
-app.use('/api/books', booksRouter)
-app.use('/api/users', usersRouter)
+app.use('/api/books', booksRouter);
+app.use('/api/users', usersRouter);
 
-const publicPath = path.join('', 'storage')
-app.use('/storage', express.static(publicPath) )
+const publicPath = path.join('', 'storage');
+app.use('/storage', express.static(publicPath) );
 
 if (!fs.existsSync(publicPath)) {
   fs.mkdirSync(publicPath)
