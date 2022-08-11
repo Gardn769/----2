@@ -19,14 +19,14 @@ ___
           description: "te2",
           authors: "t3"
       },
-  ])
+    ])
 
-{ acknowledged: true,
-  insertedIds:
-   { '0': ObjectId("62f5084393e6d590fadcbc0f"),
-     '1': ObjectId("62f5084393e6d590fadcbc10") } }
+    { acknowledged: true,
+    insertedIds:
+    { '0': ObjectId("62f5084393e6d590fadcbc0f"),
+        '1': ObjectId("62f5084393e6d590fadcbc10") } }
 
-```
+    ```
 
 2)  ```JavaScript
     > db.rofl.find({title: "title"})
