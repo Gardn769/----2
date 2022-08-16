@@ -1,7 +1,6 @@
-const passport = require("passport")
 const LocalStrategy = require("passport-local")
 const User = require("../database/entity/user")
-const {createHash}= require("crypto")
+const {createHash} = require("crypto")
 
 
 async function signin(email, password, cb) {
@@ -22,7 +21,7 @@ async function signin(email, password, cb) {
   }
 }
 
-module.exports = function initPassport(passport) {
+module.exports = { initPassport(passport) {
   passport.serializeUser((user, cb) => {
     return cb(null, user._id);
   });
@@ -40,4 +39,5 @@ module.exports = function initPassport(passport) {
     usernameField: 'email',
     passwordField: 'password',
   }, signin));
+}
 }

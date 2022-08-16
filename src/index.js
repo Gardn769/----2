@@ -2,22 +2,26 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
-const passport = require("passport")
-var session = require('express-session');
-// require('dotenv').config()
+const passport = require('passport')
+const { initPassport }  = require ('./auth/passport');
+const session = require('express-session');
 
 const error404 = require('./middleware/error-404')
 const indexRouter = require('./routes/index')
 const booksRouter = require('./routes/api/books')
 const usersRouter = require('./routes/api/users')
-const {initPassport} = require('./auth/passport')
 
 
 const { PORT, URL_MONGO } = require('./config')
 
 const app = express();
-initPassport(passport);
+
 app.use(session({secret: 'keyboard cat'}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+initPassport(passport);
+
 
 app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
@@ -28,11 +32,11 @@ app.use('/api/books', booksRouter);
 app.use('/api/users', usersRouter);
 
 const publicPath = path.join('', 'storage');
-app.use('/storage', express.static(publicPath) );
-
 if (!fs.existsSync(publicPath)) {
   fs.mkdirSync(publicPath)
 }
+app.use('/storage', express.static(publicPath) );
+
 
 app.use(error404)
 
