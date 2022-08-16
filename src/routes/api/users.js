@@ -19,6 +19,7 @@ async (req, res) => {
     email,
   } = req.body
 
+  
   const user = new User({
     username,
     password,

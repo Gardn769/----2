@@ -1,13 +1,11 @@
 const Book = require("../database/entity/book")
-const { books } = require("../store")
-const path = require('path')
 const express = require('express')
 const passport = require("passport")
 const router = express.Router()
 const fileMulter = require('../middleware/filemulter')
-const auth = require('../middleware/auth')
+
 const User = require("../database/entity/user")
-const LocalStrategy = require("passport-local")
+
 
 router
 .get('/', (req, res) => {
@@ -103,8 +101,6 @@ router
       data.fileName = req.files.fileBook[0].originalname
       data.fileBook = req.files.fileBook[0].filename
     }
-    console.log(req.body);
-    console.log(data);
 
     try {
       await Book.findByIdAndUpdate(id, data)
@@ -156,7 +152,6 @@ router
 
   .get('/user/profile',
   (req, res, next) => {
-    console.log('profile');
     if (!req.isAuthenticated()) {
       return res.status(400).send('you is not authenticated')
     }

@@ -9,7 +9,6 @@ const verify = async (username, password, done) => {
     const user = await User.findOne({
       username,
     })
-    console.log(user);
     if (!user) {
       console.error('user no found');
       return done(null, false)
