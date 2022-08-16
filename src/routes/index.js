@@ -1,9 +1,11 @@
 const Book = require("../database/entity/book")
-const { books } = require("../store")
-const path = require('path')
 const express = require('express')
+const passport = require("passport")
 const router = express.Router()
 const fileMulter = require('../middleware/filemulter')
+
+const User = require("../database/entity/user")
+
 
 router
 .get('/', (req, res) => {
@@ -42,9 +44,7 @@ router
     const fileCover = req.files.fileCover ? req.files.fileCover[0].filename : null
     const fileName = req.files.fileBook ? req.files.fileBook[0].originalname : null
     const fileBook = req.files.fileBook ? req.files.fileBook[0].filename : null
-    console.log(req.body);
-    console.log(fileCover);
-    console.log(fileBook);
+
 
     const newBook = new Book({
       title,
@@ -101,8 +101,6 @@ router
       data.fileName = req.files.fileBook[0].originalname
       data.fileBook = req.files.fileBook[0].filename
     }
-    console.log(req.body);
-    console.log(data);
 
     try {
       await Book.findByIdAndUpdate(id, data)
@@ -139,5 +137,61 @@ router
     }
 
   })
+
+  .get('/user/login', (req, res) => {
+    res.render('user/login', {
+      title: 'login',
+    })
+  })
+
+  .post('/user/login',
+  passport.authenticate("local", { successRedirect: '/user/profile', failureRedirect: '/user/login' }),
+  (req, res) => {
+    res.redirect('/')
+  })
+
+  .get('/user/profile',
+  (req, res, next) => {
+    if (!req.isAuthenticated()) {
+      return res.status(400).send('you is not authenticated')
+    }
+    next()
+  },
+  (req, res) => {
+    res.render('user/profile', {
+      title: 'profile',
+      user: req.user
+    })
+  })
+
+  .get('/user/signup', (req, res) => {
+    res.render('user/signup', {
+      title: 'signup',
+    })
+  })
+
+  .post('/user/signup',
+  async (req, res) => {
+    const {
+      username,
+      password,
+      email,
+    } = req.body
+  
+    const user = new User({
+      username,
+      password,
+      email,
+    })
+  
+    try {
+      await user.save()
+      res.redirect('/')
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(error)
+    }
+  })
+  
 
 module.exports = router;

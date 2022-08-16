@@ -47,9 +47,7 @@ router
     fileName,
     fileBook,
   })
-  console.log('boooks');
-  console.log(req.body);
-  console.log(newBook);
+
   try {
     await newBook.save()
     res.json(newBook)
