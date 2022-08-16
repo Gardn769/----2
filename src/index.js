@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const passport = require('passport')
-const { initPassport }  = require ('./auth/passport');
 const session = require('express-session');
 
 const error404 = require('./middleware/error-404')
@@ -15,15 +14,12 @@ const usersRouter = require('./routes/api/users')
 const { PORT, URL_MONGO } = require('./config')
 
 const app = express();
-
+app.use(express.urlencoded({extended: true}));
 app.use(session({secret: 'keyboard cat'}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-initPassport(passport);
-
-
-app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.set("views",  path.join(process.env.APP_ROOT || 'src', 'views'));
 app.use('/', indexRouter);

@@ -149,13 +149,14 @@ router
   })
 
   .post('/user/login',
-  passport.authenticate(LocalStrategy, { successRedirect: '/user/profile', failureRedirect: '/user/login' }),
+  passport.authenticate("local", { successRedirect: '/user/profile', failureRedirect: '/user/login' }),
   (req, res) => {
     res.redirect('/')
   })
 
   .get('/user/profile',
   (req, res, next) => {
+    console.log('profile');
     if (!req.isAuthenticated()) {
       return res.status(400).send('you is not authenticated')
     }

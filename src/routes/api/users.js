@@ -1,11 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const passport = require("passport")
+const passport = require("../../middleware/passport")
 
 router
-.post('/login', passport.authenticate('signin'), (req, res) => {
-    res.status(201);
-    res.json({ id: 1, mail: "test@mail.ru" });
+router
+.post('/login',
+passport.authenticate('local'),
+(req, res) => {
+  res.status(201)
+  res.json({ id: 1, mail: "test@mail.ru" })
 })
 
 .post('/signup',
