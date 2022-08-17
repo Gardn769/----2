@@ -3,7 +3,7 @@ const express = require('express')
 const passport = require("passport")
 const router = express.Router()
 const fileMulter = require('../middleware/filemulter')
-
+const message = require("../database/entity/message")
 const User = require("../database/entity/user")
 
 
@@ -115,9 +115,11 @@ router
     const {id} = req.params;
     try {
       const book = await Book.findById(id).select('-__v')
+      const messages = await message.find({bookId: id}).select('-__v');
       res.render('books/view', {
         title: 'view',
         book,
+        messages,
       })
     } catch (error) {
       console.error(error);
